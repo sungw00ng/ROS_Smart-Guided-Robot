@@ -1,0 +1,5 @@
+sudo rmmod mttcan
+sudo rmmod can_dev
+sudo rmmod can_raw 
+sudo rmmod can 
+sudo ~/.config/hanback/can_enable.sh 
