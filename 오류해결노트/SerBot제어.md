@@ -3,4 +3,4 @@ sudo rmmod mttcan<br>
 sudo rmmod can_dev<br>
 sudo rmmod can_raw <br>
 sudo rmmod can <br>
-sudo ~/.config/hanback/can_enable.sh ㅊ
+sudo ~/.config/hanback/can_enable.sh 
