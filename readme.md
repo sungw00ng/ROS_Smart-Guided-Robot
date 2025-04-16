@@ -1,5 +1,5 @@
-4학년 1학기 캡스톤 디자인<br>
 <h2>ROS_Smart_Guided_Robot</h2> <br>
+4학년 1학기 캡스톤 디자인<br>
 사용 로봇 : 한백전자 SerBot AGV<br>
 <img width="497" alt="Image" src="https://github.com/user-attachments/assets/d1ea4d69-8b30-4a51-a445-b27ba9ade347" /><br>
 제품 특징<br>
