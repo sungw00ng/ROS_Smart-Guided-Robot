@@ -31,7 +31,7 @@ Navigation2 스택 설정 (Costmap, Planner, Controller, Behavior Tree).<br>
 사용자 피드백: 음성 합성(TTS) 및 로봇 디스플레이 출력.<br>
 <br>
 **주요 개발 과정 (Phase별)**<br>
-![프로젝트간트차트](https://github.com/user-attachments/assets/1f33c9f6-bfc3-4be0-b33e-17e6cdc0f097)
+![프로젝트간트차트](https://github.com/user-attachments/assets/1f33c9f6-bfc3-4be0-b33e-17e6cdc0f097) <br>
 Phase 1 (1-2주차): ROS 2 기본 환경 구축 및 로봇 기본 구동 (URDF, 모터, LiDAR, 카메라 연동).<br>
 Phase 2 (3주차): SLAM을 통한 지도 작성 및 작성된 지도를 이용한 Localization 설정 및 테스트.<br>
 Phase 3 (4-5주차): Navigation2 스택 설정 및 기본적인 자율 주행 테스트 및 파라미터 튜닝.<br>
