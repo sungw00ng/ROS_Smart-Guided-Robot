@@ -1,2 +1,4 @@
-QtDesigner에서 만든 ui파일에서 <pixmap>'이미지파일이름'</pixmap>과 프로젝트 파일 안의 '이미지 파일 이름'이 서로 일치해야 작동함.
-.py에서 이미지 파일을 삽입하는 것이 아니므로 주의가 필요함.
+QtDesigner에서 만든 ui파일에서 <pixmap>'이미지파일이름'</pixmap>과 프로젝트 파일 안의 '이미지 파일 이름'이 서로 일치해야 작동함.<br>
+.py에서 이미지 파일을 삽입하는 것이 아니므로 주의가 필요함.<br>
+그리고,<br>
+QtDesigner에서 Property Editor filter-geometry에서 규격 확인 가능.<br>
