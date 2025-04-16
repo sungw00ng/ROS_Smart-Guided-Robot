@@ -15,7 +15,7 @@ QtWidgets -> 버튼, 레이블, 텍스트 편집기, 리스트 뷰, 테이블 �
 <br>
 
 [loading]<br>
-팀명인 AIMOB(AI_Mobility)를 splender 로딩창 이미지와 함께 가운데 로고처럼 시작할 예정.<br>
+팀명인 AIMOB(AI_Mobility)를 Splash Screen 로딩창 이미지와 함께 가운데 로고처럼 시작할 예정.<br>
 <br>
 [실행 흐름]
 1. loading 실행.<br>
