@@ -1,4 +1,7 @@
-Python 3.8.10 환경에 호환 가능한 PyQt5를 활용.
+[사용 환경]
+Python 3.8.10
+PyQt5
+
 [loading]
 팀명인 AIMOB(AI_Mobility)를 splender 로딩창 이미지와 함께 가운데 로고처럼 시작할 예정.
 
