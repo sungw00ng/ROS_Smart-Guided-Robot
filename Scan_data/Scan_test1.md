@@ -17,7 +17,7 @@ D: 오른쪽으로 바퀴 회전<br>
 X: 뒤로 가기<br>
 <br>
 관측 값 3 종류(왼쪽부터)<br>
-키보드 입력값 / RViz맵데이터/ Steering 및 로봇 제어값<br>
+키보드 입력 터미널 / RViz맵데이터/ Steering 및 로봇 제어값<br>
 <br>
 **Scan1**<br>
 SLAM(Simultaneous Localization and Mapping)<br>
@@ -31,4 +31,4 @@ Cost Map 혹은 Occupancy Grid  MAP<br>
 파랑: 자유 공간<br>
 하늘, 보라: 감지는 되었는데 불확실한 공간<br>
 빨강, 분홍: 장애물 혹은 벽<br>
-픽셀기반 맵으로 로봇 경로 계획 및 장애물 회피 등에 쓰임.<br>
+픽셀기반 맵으로 로봇 경로 계획 및 장애물 회피 등에 쓰이는 것을 확인함.<br>
