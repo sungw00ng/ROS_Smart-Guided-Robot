@@ -1,0 +1,17 @@
+음성 어시스턴트 UI 구성 요약:
+self.to_gass: "Voice Assistant" 텍스트 버튼, 진입점
+self.gass: "Voice Assistant" 그룹 박스, 관련 UI 묶음
+self.gass_call: 음성 인식 시작 버튼 (아이콘)
+self.gass_img: 상태/피드백 표시 레이블
+self.gass_snowboy: 핫워드 감지 on/off 버튼 (기본 on)
+self.gass_text: 인식된 음성 텍스트 표시 (읽기 전용)
+
+핵심 기능: 음성 입력 시작, 텍스트 확인, 핫워드 감지 제어
+
+
+
+
+
+
+
+
