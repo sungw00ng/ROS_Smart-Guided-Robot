@@ -1,1 +1,0 @@
-Pyautogui, speech_recognition, pyaudio, clipboard, keyboard 이렇게 총 5개의 모듈이 필요
