@@ -10,7 +10,7 @@ from PySide2.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QLabel,
     QHBoxLayout, QPushButton, QMessageBox
 )
-from PySide2.QtGui import QMovie, QPixmap, QFont
+from PySide2.QtGui import QMovie, QPixmap
 from PySide2.QtCore import Qt, QTimer, QEvent, QObject, Signal, Slot
 import speech_recognition as sr
 import threading
