@@ -1,4 +1,7 @@
-**버그수정**
+#Voice_Assistant_Version 3
+#시작 gui가 밀려서 1시에 나타나던 오류 수정
+#'네' 혹은 '아니오' 입력 시 실행되지 않던 오류 수정
+#음성 인식 시 '네' 대신 '그걸로 부탁해'일 때 실행가능함.
 import sys
 import pygame
 from PySide2.QtWidgets import (
