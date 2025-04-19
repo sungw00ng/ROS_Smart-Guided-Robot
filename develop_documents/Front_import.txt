@@ -1,0 +1,6 @@
+pip install QtWidgets
+pip install PyQt5
+pip install pygame
+pip install PySide2  (용량 큼.)
+pip install SpeechRecognition
+pip install pyaudio
