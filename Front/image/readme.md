@@ -4,8 +4,8 @@
 //background_313.png<br>
 ![Image](https://github.com/user-attachments/assets/96fff0cc-fcd6-47f1-bd7d-88cd54bf0915)
 
-//voice.gif
+<br>//voice.gif<br>
 ![Image](https://github.com/user-attachments/assets/40a8ad73-728a-418a-8181-6bfedfa5f02b)
 
-//960_540.png
+<br>//960_540.png<br>
 ![Image](https://github.com/user-attachments/assets/bc35388f-ed70-4aca-b732-c070f821008d)
