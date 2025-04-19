@@ -1,7 +1,8 @@
 #Voice_Assistant_Version 3
 #background_313.png가 밀려서 1시에 나타나던 오류 수정
 #'네' 혹은 '아니오' 입력 시 실행되지 않던 오류 수정
-#음성 인식 시 '네' 대신 '그걸로 부탁해'일 때 실행가능함.
+#음성 인식 시 '네' 대신 '그걸로 부탁해'일 때 실행가능함.('네'가 음성입력으로 잘 안됨.)
+#'아니오'클릭 시 초기화면 reset
 #향후 Markov Chain을 통해 v4에서 더 다양한 상황을 만들어볼 예정. 
 import sys
 import pygame
@@ -70,6 +71,9 @@ class VoiceAssistant(QWidget):
         )
         self.audio_player = AudioPlayer()
         self.audio_player.finished.connect(self.start_voice_recognition_after_question)
+        self.response_audio_player = AudioPlayer()
+        self.response_audio_player.finished.connect(self.start_post_313_action)
+        self.query_response_player = AudioPlayer() # 'requestion.mp3' 재생을 위한 AudioPlayer
 
         self.initUI()
         QTimer.singleShot(500, self.play_startup_sounds)
@@ -256,9 +260,17 @@ class VoiceAssistant(QWidget):
         if self.waiting_yes_no:
             if "그걸로 부탁해" in text_lower:
                 self.play_response("followme.mp3")
+                self.reset_state()
+            elif "아니" in text_lower:  # 음성으로 '아니오'라고 답했을 경우
+                self.hide_background_image()
+                self.hide_yes_no_buttons()
+                self.query_response_player.finished.connect(self.start_voice_recognition_delayed)
+                self.query_response_player.play("requestion.mp3")
+                self.waiting_yes_no = False
+                return
             else:
                 self.play_response("requestion.mp3")
-            self.reset_voice_input(3000)
+                QTimer.singleShot(2500, self.start_voice_recognition)
             return
 
         if self.is_313_question(text_lower):
@@ -286,14 +298,14 @@ class VoiceAssistant(QWidget):
                         (self.height() - scaled.height()) // 2
                     )
                     self.background_label.show()
-
-                    if os.path.exists("voice_313.mp3"):
-                        pygame.mixer.music.load("voice_313.mp3")
-                        pygame.mixer.music.play()
-
                     self.waiting_yes_no = True
                     self.show_yes_no_buttons()
-                    QTimer.singleShot(1000, self.toggle_voice_input)  # 이미지 표시 후 1초 뒤 음성 인식 시작
+                    if os.path.exists("voice_313.mp3"):
+                        self.response_audio_player = AudioPlayer()
+                        self.response_audio_player.finished.connect(self.start_voice_recognition)
+                        self.response_audio_player.play("voice_313.mp3")
+                    else:
+                        self.start_voice_recognition()
                     return
 
         except Exception as e:
@@ -301,6 +313,10 @@ class VoiceAssistant(QWidget):
 
         self.show_error_message("정보를 표시할 수 없습니다.")
         self.reset_voice_input(3000)
+
+    def start_post_313_action(self):
+        """313호 음성 재생 후 예/아니오 대기 (더 이상 사용 안 함)"""
+        pass
 
     def play_response(self, audio_file):
         """응답 오디오 재생"""
@@ -319,6 +335,15 @@ class VoiceAssistant(QWidget):
         self.hide_yes_no_buttons()
         self.hide_background_image()
         QTimer.singleShot(delay_ms, self.toggle_voice_input)
+
+    def start_voice_recognition(self):
+        """음성 인식 시작 (버튼 없이)"""
+        if not self.is_recording:
+            self.start_recording()
+
+    def start_voice_recognition_delayed(self):
+        """1초 후 음성 인식 시작"""
+        QTimer.singleShot(1000, self.start_voice_recognition)
 
     def show_yes_no_buttons(self):
         """예/아니오 버튼 표시"""
@@ -356,7 +381,24 @@ class VoiceAssistant(QWidget):
         """버튼 응답 처리"""
         response = "네" if is_yes else "아니오"
         print(f"버튼 선택: {response}")
-        self.handle_recognized_text(response)
+        if self.waiting_yes_no:
+            if is_yes:
+                self.play_response("followme.mp3")
+                self.reset_state()
+            else:
+                self.hide_background_image()
+                self.hide_yes_no_buttons()
+                self.query_response_player.finished.connect(self.start_voice_recognition_delayed)
+                self.query_response_player.play("requestion.mp3")
+                self.waiting_yes_no = False
+                return
+
+    def reset_state(self):
+        """313 관련 상태 초기화"""
+        self.waiting_yes_no = False
+        self.hide_yes_no_buttons()
+        self.hide_background_image()
+        QTimer.singleShot(1000, self.start_voice_recognition)
 
     def closeEvent(self, event):
         """창 닫기 이벤트 처리"""
