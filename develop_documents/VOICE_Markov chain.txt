@@ -1,0 +1,92 @@
+state 구조
+[초기 인사] → [목적지 질문] → [안내 중] → [목적지 도착] → [피드백] → [종료]
+
+2. 상태 전이 (Transition 예시)
+현재 상태	다음 상태	전이 확률	설명
+greeting	ask_destination	1.0	인사 후 바로 질문
+ask_destination	confirm_destination	0.8	목적지 인식 성공
+ask_destination	ask_destination	0.2	인식 실패: 재질문
+confirm_destination	navigation	1.0	확인 후 이동 시작
+navigation	obstacle	0.3	장애물 발생
+navigation	arrival	0.7	정상 이동
+obstacle	navigation	1.0	우회 후 복귀
+arrival	feedback	0.5	피드백 요청함
+arrival	closing	0.5	바로 종료 인사
+feedback	closing	1.0	피드백 후 종료
+
+개념 구분
+용어	역할 / 의미	예시
+마르코프 체인 (Markov Chain)	현재 상태만을 기반으로 다음 상태가 확률적으로 결정되는 확률 모델	"지금 guiding이면 70% 확률로 arrived로 감"
+상태 전이 행렬 (Transition Matrix)	마르코프 체인을 수학적으로 나타낸 2차원 배열(표) 형태의 도구	아래 예시 참고
+
+용어	의미
+Markov Property	"미래는 현재 상태에만 의존하고 과거는 고려하지 않는다"는 조건
+Finite-state machine	상태 머신 구조 (확률 없이 상태 전이만 정의)
+Stochastic Process	확률적 과정을 시간에 따라 모델링한 것, 마르코프 체인도 이의 한 종류
+
+import random
+# 상태 전이 정의 (확률 포함 X 예시)
+state_transitions = {
+    "greeting": ["ask_destination"],
+    "ask_destination": ["confirm_destination", "ask_destination", "unknown_destination"],
+    "confirm_destination": ["guiding"],
+    "guiding": ["arrived", "guiding", "obstacle"],
+    "arrived": ["feedback", "end"],
+    "feedback": ["end"],
+    "end": []
+}
+
+# 각 상태에 해당하는 대사 예시
+dialogues = {
+    "greeting": [
+        "안녕하세요! 저는 안내 로봇입니다. 무엇을 도와드릴까요?",
+        "어서 오세요. 어디로 가시나요?"
+    ],
+    "ask_destination": [
+        "어디로 안내해 드릴까요?",
+        "가시고 싶은 장소를 말씀해주세요."
+    ],
+    "confirm_destination": [
+        "[목적지]으로 안내해 드릴까요?",
+        "네, [목적지] 말씀이시군요. 안내를 시작하겠습니다."
+    ],
+    "unknown_destination": [
+        "죄송합니다, [장소]는 제가 잘 모르는 곳이에요.",
+        "다른 장소를 말씀해주시겠어요?"
+    ],
+    "guiding": [
+        "이쪽입니다. 저를 따라오세요.",
+        "복도를 따라 계속 직진하겠습니다."
+    ],
+    "obstacle": [
+        "전방에 장애물이 감지되었습니다. 잠시 경로를 변경합니다.",
+        "안전한 경로로 다시 안내하겠습니다."
+    ],
+    "arrived": [
+        "목적지인 [목적지]에 도착했습니다.",
+        "안내가 완료되었습니다. 여기가 찾으시는 곳입니다."
+    ],
+    "feedback": [
+        "안내 서비스는 만족스러우셨나요?",
+        "피드백을 들려주시겠어요?"
+    ],
+    "end": [
+        "이용해주셔서 감사합니다. 좋은 하루 보내세요!",
+        "또 다른 도움이 필요하시면 언제든지 불러주세요."
+    ]
+}
+
+def get_random_response(state):
+    return random.choice(dialogues[state])
+
+def get_next_state(current_state):
+    if state_transitions[current_state]:
+        return random.choice(state_transitions[current_state])
+    else:
+        return None
+
+# 시뮬레이션
+state = "greeting"
+while state:
+    print(f"[{state}] {get_random_response(state)}")
+    state = get_next_state(state)
