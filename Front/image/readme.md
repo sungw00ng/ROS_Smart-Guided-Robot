@@ -1,5 +1,5 @@
 **저작권 AIMOB, 외부인 사용 금지**
-**AIMOB에서 직접 제작한 이미지입니다.**
+**팀 AIMOB에서 직접 제작한 이미지입니다.**
 //background_313.png
 ![Image](https://github.com/user-attachments/assets/96fff0cc-fcd6-47f1-bd7d-88cd54bf0915)
 
