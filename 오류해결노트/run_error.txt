@@ -1,0 +1,5 @@
+타 OS나 컴퓨터 등으로 실행할 때,
+Project/venv/bin 에서 여러 스크립트들이 정규표현식이 서로 얽히고 다름을 확인함.
+또한, venv에 보통 import할 모듈들이 함께 포함되기 떄문에 옮길 때 같이 옮겨주면 좋음.
+이것이 안되면, 그냥 자료만 받고 develop_documents/front_import에 나와있는 
+메모장의 모듈을 따로 import해야함을 참고.
