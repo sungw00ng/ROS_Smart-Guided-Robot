@@ -2,15 +2,20 @@ pip install QtWidgets
 pip install PyQt5
 pip install pygame
 
+///
 pip install PySide2  
 (운영체제가 다른 상황에선 보통 모듈을 외부에서 받아오는데,
-.whl을 받아도 안되는 경우 버전이 맞아도 low하게 받아야함. 
+.whl을 받아도 안되는 경우 버전이 맞아도 low하게 받아야하는 경우가 있음.
+예를 들어, 어떤 OS에선 python3.8을 받아도 3.7로 인지하는 경우가 있다는 것임.
+pyside2의 경우 3.6~3.9를 지원해주는 걸로 알고 있는데 현재 상황에서 3.5정도로 인식하는 것 같음.
 따라서,
 ***
 sudo apt-get pyside2-Qtcore
 sudo apt-get pyside-QtWidgets 
 ***
 다 따로 받아야함.
+물론 pyside6을 받거나, 파이썬 버전을 올리는 경우도 있겠지만,
+현 프로젝트에선 python의 버전을 일치시켜야 하므로 이렇게 해결했음.
 
 pip install SpeechRecognition
 pip install pyaudio
