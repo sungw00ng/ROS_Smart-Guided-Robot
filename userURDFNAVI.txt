@@ -1,0 +1,103 @@
+좋아요! ROS 2 Foxy 기준으로 Navigation2 + URDF + RViz Waypoint Navigation까지 세팅하는 전체 흐름을 정리해서 단계별로 만들어볼게요.
+
+✅ 목표
+RViz에서 Waypoint만 찍으면, 로봇이 스스로 이동하도록 Navigation2를 구성합니다.
+조이스틱/컨트롤러 없이 cmd_vel만으로 움직이며, 필요한 최소 요소만 적용합니다.
+
+🧩 1단계: URDF 확장 (Foxy + Navigation2 호환)
+✅ 변경 요약
+바퀴 링크 분리: wheel_left, wheel_right로 구체화
+
+odom 프레임 추가: odom → base_link → laser
+
+TF 연결 구조:
+
+arduino
+복사
+편집
+map → odom → base_link → wheel_left / wheel_right / laser ...
+🛠️ 예시 수정된 URDF 일부
+(전체 URDF 파일 중 수정이 필요한 부분 예시)
+
+xml
+복사
+편집
+<link name="wheel_left">
+  <visual>
+    <origin xyz="0.0 0.135 0.05" rpy="0 1.5707 0"/>
+    <geometry>
+      <cylinder length="0.03" radius="0.05"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+</link>
+
+<joint name="joint_wheel_left" type="continuous">
+  <parent link="base_link"/>
+  <child link="wheel_left"/>
+  <origin xyz="-0.12 0.135 0.05" rpy="0 0 0"/>
+  <axis xyz="0 1 0"/>
+</joint>
+
+<link name="wheel_right">
+  <visual>
+    <origin xyz="0.0 -0.135 0.05" rpy="0 1.5707 0"/>
+    <geometry>
+      <cylinder length="0.03" radius="0.05"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+</link>
+
+<joint name="joint_wheel_right" type="continuous">
+  <parent link="base_link"/>
+  <child link="wheel_right"/>
+  <origin xyz="-0.12 -0.135 0.05" rpy="0 0 0"/>
+  <axis xyz="0 1 0"/>
+</joint>
+💡 기존에 back_wheels / front_wheels 묶인 링크는 제거하고 위처럼 좌우 따로 나눠줘야 합니다.
+
+🔧 2단계: odom 프레임 설정 및 TF 연결
+robot_state_publisher와 joint_state_publisher를 launch에 포함
+
+diff_drive_controller나 직접 만든 odometry 브로드캐스터로 odom → base_link 브로드캐스팅 필요
+
+bash
+복사
+편집
+ros2 run robot_state_publisher robot_state_publisher your_robot.urdf
+⚙️ 3단계: 모터 제어 (cmd_vel → 바퀴 속도 변환)
+컨트롤러가 없는 경우 직접 ROS 노드 작성 필요
+
+geometry_msgs/Twist → 각 바퀴 속도로 변환 (differential drive)
+
+python
+복사
+편집
+# 예: Python으로 작성한 기본 제어 노드
+def twist_callback(msg):
+    v = msg.linear.x
+    omega = msg.angular.z
+    v_l = v - (wheel_separation / 2.0) * omega
+    v_r = v + (wheel_separation / 2.0) * omega
+    # 여기서 바퀴 속도 전송: 예를 들면 PWM, 시리얼 등으로
+🗺️ 4단계: Navigation2 구성 (SLAM or Static Map)
+slam_toolbox로 맵 생성 → 이후 AMCL로 위치 추정
+
+nav2_bringup 패키지에서 navigation_launch.py 실행
+
+use_sim_time은 Gazebo 시뮬일 때만 True
+
+🧭 5단계: RViz에서 Waypoint Navigation
+RViz 설정:
+
+Fixed Frame: map
+
+2D Goal Pose 버튼 클릭 → 목표 위치 지정
+
+Navigation2 패널 추가하면 Waypoint 기능도 가능
+
+📦 추가 파일 정리
+twist_mux 안 씀
+twist_mux 없이도 동작 가능 (nav2가 /cmd_vel에 바로 publish)
+
