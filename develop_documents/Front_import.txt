@@ -1,6 +1,11 @@
 pip install QtWidgets
 pip install PyQt5
 pip install pygame
-pip install PySide2  (용량 큼.)
+
+pip install PySide2  
+(운영체제가 다른 상황에선 보통 모듈을 외부에서 받아오는데,
+.whl을 받아도 안되는 경우 버전이 맞아도 low하게 받아야함. 
+따라서,
+sudo apt-get pyside2-Qtcore, sudo apt-get pyside-QtWidgets)등 다 따로 받아야함.
 pip install SpeechRecognition
 pip install pyaudio
