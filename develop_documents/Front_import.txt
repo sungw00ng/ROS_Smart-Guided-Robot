@@ -16,6 +16,7 @@ sudo apt-get pyside-QtWidgets
 다 따로 받아야함.
 물론 pyside6을 받거나, 파이썬 버전을 올리는 경우도 있겠지만,
 현 프로젝트에선 python의 버전을 일치시켜야 하므로 이렇게 해결했음.
+///
 
 pip install SpeechRecognition
 pip install pyaudio
