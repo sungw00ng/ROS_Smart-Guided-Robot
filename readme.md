@@ -12,7 +12,7 @@
 - OpenCV
 
 ## Front(4배속 GIF, 사용자 음성 인식 가능)
-- VoiceAssitant_v3.2 단계 <br>
+- VoiceAssistant_v3.2 단계 <br>
 (worker[박성웅] for v4: Markov Chain을 활용한 다양한 상황 예제 AI 학습)
 <img src="https://github.com/user-attachments/assets/803a1efd-28b6-4fbf-b711-a2c0620a0576" width="500" style="float: left;" />
 
