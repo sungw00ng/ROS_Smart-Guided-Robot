@@ -1,48 +1,44 @@
-<h2>ROS_Smart_Guided_Robot</h2> <br>
-4학년 1학기 캡스톤 디자인<br>
-사용 로봇 : 한백전자 SerBot AGV<br>
-<img width="497" alt="Image" src="https://github.com/user-attachments/assets/d1ea4d69-8b30-4a51-a445-b27ba9ade347" /><br>
-제품 특징<br>
-클러스터 컴퓨팅 기반 인공지능(인지/판단)유닛과 고성능 MCU 기반 운영제어유닛<br>
-딥러닝 기반 실내용 서비스로봇 개발 플랫폼<br>
-<br>
+# ROS_Smart_Guided_Robot
+- 4학년 1학기 캡스톤 디자인<br>
+- 사용 로봇 : 한백전자 SerBot AGV<br>
+<img width="497" alt="Image" src="https://github.com/user-attachments/assets/d1ea4d69-8b30-4a51-a445-b27ba9ade347" style="float: left;"/><br>
 
-**목표**<br>
-ROS 2 기반의 자율 이동 안내 로봇(SerBot AGV) 개발 및 운용. <br>
-사용자가 지정한 목적지까지 안전하게 자율 주행하고,<br>
-기본적인 사람 인식 기능을 통해 상호작용 기반 마련.<br>
-<br>
-**주요 개발 내용**<br>
-ROS 2 기본 환경 구축: Foxy 설치, 작업 공간 생성 및 빌드, 로봇 설정 패키지 생성.<br>
-**로봇 하드웨어 인터페이스**<br>
-모터 제어: /cmd_vel 토픽 구독하여 모터 구동.<br>
-LiDAR 연동: /scan 토픽으로 데이터 발행.<br>
-카메라 연동: /image_raw 토픽으로 영상 발행.<br>
-로봇 모델링 (URDF): 링크, 조인트, 센서 위치 정의 및 TF 트리 발행.<br>
-SLAM (지도 작성): LiDAR와 TF를 이용하여 2D 점유 격자 지도 생성 및 저장.<br>
-Localization (위치 추정): 저장된 지도, LiDAR, TF를 이용하여 실시간 로봇 위치 및 방향 추정.<br>
-<br>
-**Navigation (자율 주행)**<br>
-Navigation2 스택 설정 (Costmap, Planner, Controller, Behavior Tree).<br>
-목표 지점 전달 인터페이스 구현 (RViz2).<br>
-인공지능 기능 (사람 인식): 카메라 영상 기반 딥러닝 모델을 통해 사람 위치 감지 및 결과 토픽 발행.<br>
-안내 로봇 통합 로직 및 상호작용:<br>
-중앙 제어 노드 ("Brain"): 목적지 입력, 로봇 상태 모니터링, Navigation2 목표 전달, 안내 시나리오 관리.<br>
-목적지 입력 인터페이스 (ROS 2 토픽).<br>
-사용자 피드백: 음성 합성(TTS) 및 로봇 디스플레이 출력.<br>
-<br>
-**주요 개발 과정 (Phase별)**<br>
+## 사용 환경
+- Python 3.8.10
+- PyQt5
+- ROS2 Foxy
+
+## Front(4배속 GIF, 사용자 음성 인식 가능)
+- VoiceAssitant_v3.2 단계 (주기적 업데이트 중)
+<img src="https://github.com/user-attachments/assets/803a1efd-28b6-4fbf-b711-a2c0620a0576" width="500" style="float: left;" />
+
+
+## Mapping
+- ROS2로 3층 Mapping <br> <br>
+
+-복도 <br>
+<img src="https://github.com/user-attachments/assets/60f9d9b1-f77e-43a1-b71c-45f9e7b0530c" width="500" style="float: left;" /> <br>
+
+-313호 <br>
+<img src="https://github.com/user-attachments/assets/8e3fc329-4c83-4df3-ac36-90aa32fad695" width="500" style="float: left;" /> <br>
+
+## Controller
+<img src="https://github.com/user-attachments/assets/b8f4b778-98e2-4fb8-a781-d41dfa0eab36" width="500" style="float: left;" /> <br>
+
+
+## Navigation(구현 중)
+- 
+
+## OpenCV(유닛 테스트 단계중..,실사진X)
+<img width="500" alt="Image" src="https://github.com/user-attachments/assets/19165ad8-5618-4e21-82d6-5a00402ad3e0" style="float: left;" /><br>
+
+## 주요 개발 과정 (Phase별)<br>
 ![프로젝트간트차트](https://github.com/user-attachments/assets/1f33c9f6-bfc3-4be0-b33e-17e6cdc0f097) <br>
-Phase 1 (1-2주차): ROS 2 기본 환경 구축 및 로봇 기본 구동 (URDF, 모터, LiDAR, 카메라 연동).<br>
-Phase 2 (3주차): SLAM을 통한 지도 작성 및 작성된 지도를 이용한 Localization 설정 및 테스트.<br>
-Phase 3 (4-5주차): Navigation2 스택 설정 및 기본적인 자율 주행 테스트 및 파라미터 튜닝.<br>
-Phase 4 (6-8주차): 카메라 기반 사람 인식 AI 노드 개발 및 통합, 목적지 입력/피드백 인터페이스 개발, 중앙 제어 노드 개발.<br>
-Phase 5 (9주차): 전체 시스템 통합, 실제 환경에서의 안내 시나리오 테스트, 성능 평가 및 문서화.<br>
-<br>
+
 **역할 분담**<br>
-팀원 1: 센서 인터페이스 (LiDAR, 카메라) 및 AI 인식 (사람 인식).<br>
-팀원 2: 액추에이터 (모터 제어) 및 중앙 제어 ("Brain").<br>
-팀원 3: 로봇 모델링 (URDF) 및 TF(Transform) 관리.<br>
-팀원 4: SLAM (지도 작성) 알고리즘 설정 및 지도 생성.<br>
-팀원 5: Localization (위치 추정) 설정 및 성능 최적화, TF 트리 검증.<br>
-팀원 6: Navigation2 스택 (Costmap, Planner, Controller, Behavior Tree) 설정 및 튜닝.<br>
+채형주: SLAM (지도 작성) 알고리즘 설정 및 지도 생성.<br>
+박성웅: 음성 합성(TTS) 및 로봇 디스플레이<br>
+원정식: 마르코프 체인 조사 <br>
+이정재: OpenCV를 활용한 장애물 감지 회피<br>
+안상겸: 센서 인터페이스 (LiDAR, 카메라) 및 AI 인식 (사람 인식)<br>
+한명규: OpenCV를 활용한 객체 추적 <br>
