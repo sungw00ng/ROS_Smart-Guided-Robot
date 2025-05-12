@@ -29,11 +29,13 @@
 <img src="https://github.com/user-attachments/assets/b8f4b778-98e2-4fb8-a781-d41dfa0eab36" width="500" style="float: left;" /> <br>
 
 
-## Navigation(worker[채형주, 원정식 for Nav2, Example)
+## Navigation <br>
+- worker[채형주, 원정식] for Nav2, Example <br>
 <img src="https://github.com/user-attachments/assets/61068492-390b-432e-82ce-d279049c9425" width="500" style="float: left;" /> <br>
 
 
-## OpenCV(worker[이정재, 안상겸, 한명규 for door 객체 인식 훈련 , Example)
+## OpenCV
+- worker[이정재, 안상겸, 한명규] for door 객체 인식 훈련 , Example <br>
 - 최단 경로 연구 중 <br>
 <img width="500" alt="Image" src="https://github.com/user-attachments/assets/19165ad8-5618-4e21-82d6-5a00402ad3e0" style="float: left;" /><br>
 
