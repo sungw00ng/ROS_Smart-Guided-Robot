@@ -1,3 +1,5 @@
+#버튼 이벤트 처리(클릭 및 태그)
+#학교 레이아웃 반영율 높힘.
 from PySide2.QtWidgets import QApplication, QWidget, QPushButton, QLabel
 from PySide2.QtGui import QFont
 from PySide2.QtCore import Qt
