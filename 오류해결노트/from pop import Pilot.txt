@@ -1,0 +1,4 @@
+SerBot AGV안에 있는 SodaOS의 Pilot.py를 찾기 위해서는,
+단순히 'hide 보기' 만으로 해결 되지 않음.
+주피터 노트북에서 print(Pilot) 실행 후, 경로 찾은 뒤에
+sodaOS에서 터미널 탐색으로 숨겨진 Pilot.py를 따로 찾아줘야함.
