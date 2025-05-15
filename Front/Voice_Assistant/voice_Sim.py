@@ -81,42 +81,59 @@ class VoiceAssistant(QWidget):
         self.recognized_queries = []
 
     def initUI(self):
-        """UI 초기화"""
+        """UI 초기화: 중앙 GIF 위에 이미지 오버레이"""
         self.setWindowTitle("ROS2_SerBotAGV")
-        self.setGeometry(0, 0, 1920, 1080)  # 해상도 변경
+        self.setGeometry(0, 0, 1920, 1080)
         self.setStyleSheet("background-color: #000000;")
 
         layout = QVBoxLayout()
-        layout.setContentsMargins(70, 70, 70, 70)  # 여백 조정
-        layout.setSpacing(30)  # 간격 조정
+        layout.setContentsMargins(70, 70, 70, 70)
+        layout.setSpacing(30)
 
-        # 제목 레이블
-        title_label = QLabel("AIMOB-고은", self)
-        title_label.setAlignment(Qt.AlignCenter)
-        title_label.setStyleSheet("""
-            color: #00ddff;
-            font-size: 60px; /* 폰트 크기 조정 */
-            font-weight: bold;
-        """)
-        layout.addWidget(title_label)
-
-        # 애니메이션 레이블
+        # ===== GIF 라벨 =====
+        gif_size = 800  # GIF 크기를 약 두 배로 조정 (800 * 2)
         self.movie_label = QLabel(self)
+        self.movie_label.setFixedSize(gif_size, gif_size)
+        self.movie_label.setAlignment(Qt.AlignCenter)
+
         self.movie = QMovie("voice.gif")
         self.movie_label.setMovie(self.movie)
         self.movie.start()
-        self.movie_label.setAlignment(Qt.AlignCenter | Qt.AlignTop)
-        layout.addWidget(self.movie_label)
 
-        # 음성 인식 버튼
+        # ===== 이미지 오버레이 (movie_label 안에 포함) =====
+        overlay_size = 200  # 오버레이 이미지 크기를 약 두 배로 조정 (200 * 2)
+        self.image_overlay_label = QLabel(self.movie_label)  # movie_label의 자식으로 설정
+        pixmap = QPixmap("image/Sim_Gyu_Seon.png")
+        if not pixmap.isNull():
+            scaled_pixmap = pixmap.scaled(overlay_size, overlay_size, Qt.KeepAspectRatio,
+                                          Qt.SmoothTransformation)  # KeepAspectRatio 사용
+            self.image_overlay_label.setPixmap(scaled_pixmap)
+            self.image_overlay_label.setFixedSize(overlay_size, overlay_size)
+            self.image_overlay_label.setAlignment(Qt.AlignCenter)
+            self.image_overlay_label.setStyleSheet(f"""
+                border-radius: {overlay_size // 2}px; /* 원형 테두리를 이미지 크기에 맞춰 조정 */
+                background: transparent;
+            """)
+            # 이미지 중앙 위치 이동 (GIF 라벨의 변경된 크기에 맞춰 계산)
+            self.image_overlay_label.move(
+                (self.movie_label.width() - self.image_overlay_label.width()) // 2,
+                (self.movie_label.height() - self.image_overlay_label.height()) // 2
+            )
+            self.image_overlay_label.raise_()
+        else:
+            print("[경고] 이미지 로드 실패: image/Sim_Gyu_Seon.png")
+
+        layout.addWidget(self.movie_label, alignment=Qt.AlignCenter)
+
+        # ===== 음성 인식 버튼 =====
         self.voice_button = QPushButton("음성 인식 시작", self)
         self.voice_button.setStyleSheet("""
             QPushButton {
                 background-color: #00ddff;
                 color: white;
-                font-size: 30px; /* 폰트 크기 조정 */
-                padding: 20px; /* 패딩 조정 */
-                border-radius: 15px; /* 둥근 테두리 조정 */
+                font-size: 30px;
+                padding: 20px;
+                border-radius: 15px;
             }
             QPushButton:disabled {
                 background-color: #555555;
@@ -124,34 +141,22 @@ class VoiceAssistant(QWidget):
             }
         """)
         self.voice_button.clicked.connect(self.toggle_voice_input)
-        layout.addWidget(self.voice_button)
+        layout.addWidget(self.voice_button, alignment=Qt.AlignCenter)
 
-        self.setLayout(layout)
-
-        # 배경 이미지 레이블
-        self.background_label = QLabel(self)
-        self.background_label.setStyleSheet("""
-            background-color: rgba(0, 0, 0, 160);
-            border: 3px solid #00ddff; /* 테두리 굵기 조정 */
-        """)
-        self.background_label.setAlignment(Qt.AlignCenter)
-        self.background_label.hide()
-
-        # 예/아니오 버튼
+        # ===== 예/아니오 버튼 =====
         self.button_layout = QHBoxLayout()
         self.yes_button = QPushButton("네")
         self.no_button = QPushButton("아니오")
 
         button_style = """
-            font-size: 24px; /* 폰트 크기 조정 */
+            font-size: 24px;
             background-color: #00ddff;
             color: black;
-            border-radius: 12px; /* 둥근 테두리 조정 */
-            padding: 10px 20px; /* 패딩 조정 */
+            border-radius: 12px;
+            padding: 10px 20px;
         """
-
         for btn in [self.yes_button, self.no_button]:
-            btn.setFixedSize(150, 70) # 버튼 크기 조정
+            btn.setFixedSize(150, 70)
             btn.setStyleSheet(button_style)
 
         self.yes_button.clicked.connect(self.yes_clicked)
@@ -160,10 +165,21 @@ class VoiceAssistant(QWidget):
         self.button_layout.addWidget(self.yes_button)
         self.button_layout.addWidget(self.no_button)
         layout.addLayout(self.button_layout)
-        self.hide_yes_no_buttons()
+
+        self.setLayout(layout)
+
+        # 배경 이미지 레이블(필수)
+        self.background_label = QLabel(self)
+        self.background_label.setStyleSheet("""
+            background-color: rgba(0, 0, 0, 160);
+            border: 3px solid #00ddff;
+        """)
+        self.background_label.setAlignment(Qt.AlignCenter)
+        self.background_label.hide()
+
 
     def play_startup_sounds(self):
-        """시작 음성 재생"""
+        """시작 음성 재생 (question.mp3 제외, welcome 파일 랜덤 재생)"""
         try:
             welcome_dir = "welcome"
             welcome_files = [f for f in os.listdir(welcome_dir) if f.startswith("welcome_") and f.endswith(".mp3")]
@@ -175,21 +191,17 @@ class VoiceAssistant(QWidget):
                     pygame.mixer.music.play()
                     while pygame.mixer.music.get_busy():
                         QApplication.processEvents()
+                    QTimer.singleShot(500, self.toggle_voice_input)  # 재생 후 0.5초 뒤 음성 인식 시작
                 else:
                     print(f"[경고] 랜덤 환영 오디오 파일 없음: {random_welcome_file}")
+                    QTimer.singleShot(500, self.toggle_voice_input)  # 파일 없어도 0.5초 뒤 음성 인식 시작
             else:
                 print(f"[경고] 환영 오디오 파일이 디렉토리에 없습니다: {welcome_dir}")
-
-            question_file = "question.mp3"
-            if os.path.exists(question_file):
-                self.audio_player.play(question_file)
-            else:
-                print(f"[경고] 오디오 파일 없음: {question_file}")
-                self.start_voice_recognition_after_question()
+                QTimer.singleShot(500, self.toggle_voice_input)  # 폴더 없어도 0.5초 뒤 음성 인식 시작
 
         except Exception as e:
             print(f"[오류] 오디오 재생 실패: {str(e)}")
-            self.start_voice_recognition_after_question()
+            QTimer.singleShot(500, self.toggle_voice_input)  # 오류 발생해도 0.5초 뒤 음성 인식 시작
 
     def start_voice_recognition_after_question(self):
         """question.mp3 재생 후 음성 인식 시작"""
@@ -417,7 +429,9 @@ class VoiceAssistant(QWidget):
 
 
 if __name__ == "__main__":
+    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)
     assistant = VoiceAssistant()
-    assistant.showFullScreen() # 전체 화면으로 시작 (선택 사항)
+    assistant.setGeometry(0, 0, 1920, 1080)
+    assistant.show()
     sys.exit(app.exec_())
