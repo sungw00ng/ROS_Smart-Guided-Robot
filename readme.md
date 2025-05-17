@@ -13,7 +13,8 @@
 
 ## Front(4배속 GIF, 사용자 음성 인식 가능)
 - Voice_Assistant_Sim_v3 단계 <br>
-- 사용자 음성 인식[sklearn(models/voice_model.joblib), 텍스트 벡터화, 코사인유사도 기능]
+- 사용자 음성 인식[sklearn(models/voice_model.joblib), 텍스트 벡터화, 코사인유사도]
+- 추후 마무리 단계에서 markov chain 쓰기.
 <img src="https://github.com/user-attachments/assets/803a1efd-28b6-4fbf-b711-a2c0620a0576" width="500" style="float: left;" />
 
 
