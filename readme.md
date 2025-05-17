@@ -15,7 +15,7 @@
 - Voice_Assistant_Sim_v3 단계 <br>
 - 사용자 음성 인식[sklearn(models/voice_model.joblib), 텍스트 벡터화, 코사인유사도]
 - 추후 마무리 단계에서 markov chain 쓰기.
-<img src="https://github.com/user-attachments/assets/803a1efd-28b6-4fbf-b711-a2c0620a0576" width="500" style="float: left;" />
+<img src="https://github.com/user-attachments/assets/90536fb1-f2f2-4ea5-b686-ff5e5c59b678" width="500" style="float: left;" />
 
 
 ## Mapping
