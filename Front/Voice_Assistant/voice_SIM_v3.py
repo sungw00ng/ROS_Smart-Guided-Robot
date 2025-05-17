@@ -2,7 +2,7 @@
 #코사인유사도 측정 추가(핵심 단어 파악)
 #오류 재생 관련 수정
 #sklearn 모델학습으로 사용자 음성 인식 향상
-#models/voice_model.joblib 자동 생성(저장/불러오기 가능)
+#models/voice_model.joblib생성(실행 시 자동 저장/불러오기 가능)
 import sys
 import pygame
 from PySide2.QtWidgets import (
