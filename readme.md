@@ -12,8 +12,8 @@
 - OpenCV
 
 ## Front(4배속 GIF, 사용자 음성 인식 가능)
-- VoiceAssistant_v3.2 단계 <br>
-(worker[박성웅] for v4: Markov Chain을 활용한 다양한 상황 예제 AI 학습)
+- Voice_Assistant_Sim_v3 단계 <br>
+- 사용자 음성 인식[sklearn(models/voice_model.joblib), 텍스트 벡터화, 코사인유사도 기능]
 <img src="https://github.com/user-attachments/assets/803a1efd-28b6-4fbf-b711-a2c0620a0576" width="500" style="float: left;" />
 
 
@@ -31,22 +31,12 @@
 
 
 ## Navigation <br>
-- worker[채형주, 원정식] for Nav2, Example <br>
 <img src="https://github.com/user-attachments/assets/61068492-390b-432e-82ce-d279049c9425" width="500" style="float: left;" /> <br>
 
 
 ## OpenCV
-- worker[이정재, 안상겸, 한명규] for door 객체 인식 훈련 , Example <br>
 - 최단 경로 연구 중 <br>
 <img width="500" alt="Image" src="https://github.com/user-attachments/assets/19165ad8-5618-4e21-82d6-5a00402ad3e0" style="float: left;" /><br>
 
 ## 주요 개발 과정 (Phase별)<br>
 ![프로젝트간트차트](https://github.com/user-attachments/assets/1f33c9f6-bfc3-4be0-b33e-17e6cdc0f097) <br>
-
-**역할 분담**<br>
-채형주: SLAM (지도 작성) 알고리즘 설정 및 지도 생성.<br>
-박성웅: 음성 합성(TTS) 및 로봇 디스플레이<br>
-원정식: 네비게이션 자율 주행 <br>
-이정재: OpenCV를 활용한 장애물 감지 회피<br>
-안상겸: 센서 인터페이스 (LiDAR, 카메라) 및 AI 인식 (사람 인식)<br>
-한명규: OpenCV를 활용한 객체 추적 <br>
