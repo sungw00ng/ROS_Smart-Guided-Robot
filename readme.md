@@ -1,8 +1,8 @@
 **본 게시물의 저작권은 작성자에게 있으며, 허가 없는 복제 및 재배포는 금지됩니다.**
 # ROS_Smart_Guided_Robot
 - 4학년 1학기 캡스톤 디자인<br>
+- [중간 평가 보고 PPT] (https://www.miricanvas.com/v/14m88l5) <br>
 - 사용 로봇 : 한백전자 SerBot AGV <br>
-- 중간 평가 보고 PPT https://www.miricanvas.com/v/14m88l5
 <img width="300" alt="Image" src="https://github.com/user-attachments/assets/d1ea4d69-8b30-4a51-a445-b27ba9ade347" style="float: left;"/><br>
 
 ## 사용 환경 및 프로그램
