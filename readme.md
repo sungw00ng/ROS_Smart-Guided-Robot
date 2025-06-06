@@ -19,25 +19,25 @@
 
 
 ## Mapping
-- ROS2로 Mapping <br> <br>
-
-- 3층 복도 <br>
-<img src="https://github.com/user-attachments/assets/60f9d9b1-f77e-43a1-b71c-45f9e7b0530c" width="500" style="float: left;" /> <br>
-
-- 313호<br>
-<img src="https://github.com/user-attachments/assets/8e3fc329-4c83-4df3-ac36-90aa32fad695" width="500" style="float: left;" /> <br>
+<img src="https://github.com/user-attachments/assets/7f7c75e4-9918-41b5-b912-bad5558dd65a" width="600"/><br>
+<img src="https://github.com/user-attachments/assets/1b38b6ae-5c21-4c46-82c3-6aa7a9f16c93" width="600"/><br>
+- A*경로탐색(다익스트라)
+현재까지의 비용 g(n) + 목표까지의 추정 비용 h(n)= f(n)이 가장 낮은 노드를 우선 탐색 <br>
+```txt
+heapq.heappush(heap, (f, node)): 우선순위 f를 기준으로 자동 정렬
+heapq.heappop(heap): 가장 f값이 작은 노드를 O(log N) 시간에 꺼낼 수 있음
+```
+- 장애물 우클릭 토글(다시 A* 탐색을 자동으로 실행해서 경로를 업데이트) <br>
 
 ## Controller
 <img src="https://github.com/user-attachments/assets/b8f4b778-98e2-4fb8-a781-d41dfa0eab36" width="500" style="float: left;" /> <br>
 
 
-## Navigation <br>
-<img src="https://github.com/user-attachments/assets/61068492-390b-432e-82ce-d279049c9425" width="500" style="float: left;" /> <br>
 
 
-## OpenCV
-- 최단 경로 연구 중 <br>
-<img width="500" alt="Image" src="https://github.com/user-attachments/assets/19165ad8-5618-4e21-82d6-5a00402ad3e0" style="float: left;" /><br>
+## Lidar 센서 기반 장애물 회피 
+- 장애물 회피
+
 
 ## 주요 개발 과정 (Phase별)<br>
 ![프로젝트간트차트](https://github.com/user-attachments/assets/1f33c9f6-bfc3-4be0-b33e-17e6cdc0f097) <br>
