@@ -1,3 +1,6 @@
+#floor3_map_control이 309호에 해당하는 지점에 도착하였을 때,
+#이 코드가 실행되어야한다.
+
 from PySide2.QtWidgets import (
     QApplication, QLabel, QPushButton, QVBoxLayout,
     QHBoxLayout, QWidget
