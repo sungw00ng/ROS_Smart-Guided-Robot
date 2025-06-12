@@ -26,20 +26,3 @@ QtWidgets -> 버튼, 레이블, 텍스트 편집기, 리스트 뷰, 테이블 �
 7. 주크박스 기능이 활성화되면 음악 재생 및 제어가 가능합니다.<br>
 8. 음성 비서 기능이 활성화되면 Snowboy가 핫워드를 감지하고, 감지 시 Google Assistant를 통해 음성 명령을 처리하여 주크박스를 제어.<br>
 9. 프로그램 종료 시 finally 블록에서 interrupted 변수를 True로 설정하여 스레드를 안전하게 종료.<br>
-<br>
-[용어 설명]<br>
-ofth (Object Follow Thread)<br>
--주요 기능: 카메라로 사람을 인식하고 로봇을 움직여 따라감.<br>
--사용 가능 라이브러리: 영상 처리의 OpenCV, 수학 연산의 Math, 로봇 및 카메라 제어의 pop.Pilot 라이브러리를 사용.<br>
--GUI 상호작용: 인식된 사람의 모습이 담긴 영상을 GUI 화면에 보여줌.<br>
--스레드 클래스: 표준 파이썬의 threading.Thread를 사용하여 백그라운드에서 실행.<br>
-<br>
-gassth (Google Assistant Thread):<br>
-주요 기능: 음성으로 특정 단어를 감지하고 Google Assistant를 통해 음성 명령을 처리하여 주크박스를 제어.<br>
-사용 가능 라이브러리: 핫워드 감지의 Snowboy, Google Assistant 연동의 popAssist.GAssistant, 오디오 입출력의 pyaudio를 간접적으로 사용.<br>
-GUI 상호작용: 인식된 음성 텍스트와 음성 인식 상태를 GUI에 표시하고, 주크박스 제어 신호를 GUI로 보냄.<br>
-스레드 클래스: PyQt의 QThread를 상속받아 GUI 이벤트 루프와 더 잘 통합되어 실행.<br>
-<br>
-snowboy<br>
-사용자 정의 핫워드 엔진으로, 핫워드(Hotword)는 특정 기능을 활성화시키기 위해 미리 지정해 놓은 단어나 구절을 의미.<br>
-쉽게 설명하자면, 마치 "헤이 구글"이나 "오케이 구글"처럼 특정 "핫워드" (여기서는 Snowboy가 감지하는 특정 소리나 단어)를 말하면, 음성 비서 기능이 활성화되는 것.<br>
