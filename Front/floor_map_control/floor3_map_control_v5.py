@@ -1,4 +1,3 @@
-#v5.map_widget
 import sys
 import heapq
 import math
@@ -8,8 +7,21 @@ import re
 
 from PySide2.QtWidgets import QApplication, QWidget, QMessageBox, QInputDialog
 from PySide2.QtGui import QPainter, QColor, QPen, QFont, QBrush
-from PySide2.QtCore import Qt, QRect, QTimer, QPoint, QUrl, Slot, Signal  # Signal 추가
-from PySide2.QtMultimedia import QMediaPlayer, QMediaContent, QMediaPlaylist
+from PySide2.QtCore import Qt, QRect, QTimer, QPoint, QUrl, Slot, Signal
+
+# PySide2.QtMultimedia 대신 pygame.mixer 사용
+try:
+    import pygame
+
+    pygame.init()
+    pygame.mixer.init()
+except ImportError:
+    print("[MapWidget 오류] pygame이 설치되지 않았습니다. 오디오 재생이 작동하지 않습니다.")
+    print("[MapWidget 오류] pip install pygame 를 실행하여 설치해주세요.")
+    pygame = None
+except Exception as e:
+    print(f"[MapWidget 오류] pygame 초기화 실패: {e}")
+    pygame = None
 
 # --- 설정값 ---
 WINDOW_WIDTH = 1500  # 맵 위젯의 고정된 너비에 맞춤
@@ -194,39 +206,48 @@ class MapWidget(QWidget):
 
         self.initialize_grid_with_map_areas()
 
-        self.media_player = QMediaPlayer(self)
-        self.media_player.setVolume(100)
-        self.media_player.stateChanged.connect(self.handle_media_state_changed)
-        self.is_playing_audio = False
+        self.is_playing_audio = False  # pygame 오디오 재생 상태 플래그
+        self.audio_playback_timer = QTimer(self)  # 오디오 재생 완료 확인용 타이머
+        self.audio_playback_timer.timeout.connect(self._check_audio_playback_finished)
 
-        # 이 부분은 VoiceAssistant가 메인 애플리케이션에서 관리할 것이므로
-        # MapWidget이 독립적으로 실행될 때만 필요합니다. (주석 처리)
-        # QTimer.singleShot(500, self.play_initial_audio)
-
-    def handle_media_state_changed(self, state):
-        if state == QMediaPlayer.StoppedState:
+    def _check_audio_playback_finished(self):
+        """Checks if pygame audio playback has finished."""
+        if pygame is not None and not pygame.mixer.music.get_busy():
             self.is_playing_audio = False
+            self.audio_playback_timer.stop()  # 재생 완료 시 타이머 중지
+            print("MP3 재생 완료 (MapWidget 내부 타이머).")
+            # 필요하다면 여기서 오디오 재생 완료 후 추가 동작을 정의할 수 있습니다.
 
-    def play_initial_audio(self):
+    def play_audio(self, audio_file_path):
+        """Plays an MP3 file using pygame.mixer."""
+        if pygame is None or not pygame.mixer.get_init():
+            print("[MapWidget 오류] pygame 믹서가 초기화되지 않아 오디오 재생을 할 수 없습니다. pygame이 설치되어 있는지 확인해주세요.")
+            # QMessageBox.warning(self, "오디오 재생 오류", "pygame 믹서가 초기화되지 않아 오디오 재생을 할 수 없습니다.") # 디버그 콘솔 처리
+            self.is_playing_audio = False
+            return
+
         try:
-            audio_file = "AI_SIM_mp3/navi.mp3"
             base_dir = os.path.dirname(os.path.abspath(__file__))
-            selected_file = os.path.join(base_dir, audio_file)
+            selected_file = os.path.join(base_dir, audio_file_path)
 
             if not os.path.exists(selected_file):
-                QMessageBox.warning(self, "파일 없음", f"오디오 파일을 찾을 수 없습니다: {selected_file}")
-                print(f"Error: Audio file not found at {selected_file}")
+                print(f"[MapWidget 오류] 오디오 파일을 찾을 수 없습니다: {selected_file}")
+                # QMessageBox.warning(self, "파일 없음", f"오디오 파일을 찾을 수 없습니다: {selected_file}") # 디버그 콘솔 처리
+                self.is_playing_audio = False
                 return
 
-            media_content = QMediaContent(QUrl.fromLocalFile(selected_file))
-            self.media_player.setMedia(media_content)
-            self.media_player.play()
+            pygame.mixer.music.load(selected_file)
+            pygame.mixer.music.play()
             self.is_playing_audio = True
             print(f"MP3 재생 시작: {selected_file}")
 
+            # 오디오 재생 완료를 감지하기 위해 타이머 시작
+            self.audio_playback_timer.start(100)  # 100ms마다 체크
+
         except Exception as e:
-            print(f"음성 재생 오류: {str(e)}")
-            QMessageBox.warning(self, "재생 오류", f"MP3 파일 재생에 실패했습니다: {e}")
+            print(f"[MapWidget 오류] MP3 파일 재생 시작에 실패했습니다: {e}")
+            # QMessageBox.warning(self, "재생 오류", f"MP3 파일 재생에 실패했습니다: {e}") # 디버그 콘솔 처리
+            self.is_playing_audio = False
 
     def initialize_grid_with_map_areas(self):
         self.grid = [[1 for _ in range(GRID_COLS)] for _ in range(GRID_ROWS)]
@@ -377,17 +398,8 @@ class MapWidget(QWidget):
 
     def draw_clicks(self, painter):
         painter.setFont(QFont("Arial", 10))
-        # current_pos가 아직 설정되지 않은 경우 (시작 위치 추정 단계) -> 이 부분은 이제 사용되지 않음
-        if self.current_pos is None and not self.start_pos_set:
-            for i, (col, row) in enumerate(self.clicked_positions):
-                x = col * CELL_WIDTH
-                y = row * CELL_HEIGHT
-                painter.fillRect(QRect(x, y, CELL_WIDTH, CELL_HEIGHT), GRID_CLICK_OVERLAY_COLOR)
-                painter.setPen(Qt.white)
-                label = f"후보 {i + 1}\n({col},{row})"
-                painter.drawText(QRect(x, y, CELL_WIDTH, CELL_HEIGHT), Qt.AlignCenter, label)
         # 경로 탐색의 도착지점을 표시하는 경우 (voice command 또는 클릭 후)
-        elif len(self.clicked_positions) == 1:  # self.clicked_positions에 도착지점이 들어있을 때
+        if len(self.clicked_positions) == 1:  # self.clicked_positions에 도착지점이 들어있을 때
             col, row = self.clicked_positions[0]
             x = col * CELL_WIDTH
             y = row * CELL_HEIGHT
@@ -414,8 +426,9 @@ class MapWidget(QWidget):
             painter.drawEllipse(QPoint(int(x), int(y)), int(radius), int(radius))
 
     def mousePressEvent(self, event):
-        if self.media_player.state() == QMediaPlayer.PlayingState or self.is_playing_audio:
-            QMessageBox.information(self, "잠시만요", "음성 안내가 재생 중입니다. 잠시 기다려주세요.")
+        if self.is_playing_audio:  # pygame 오디오 재생 상태 플래그 확인
+            print("[MapWidget 경고] 음성 안내가 재생 중입니다. 잠시 기다려주세요.")
+            # QMessageBox.information(self, "잠시만요", "음성 안내가 재생 중입니다. 잠시 기다려주세요.") # 디버그 콘솔 처리
             return
 
         col = int(event.x() // CELL_WIDTH)
@@ -447,7 +460,8 @@ class MapWidget(QWidget):
         if event.button() == Qt.RightButton:
             # 시작 위치가 고정되었으므로 위치 추정/설정 로직은 더 이상 필요 없음
             if clicked_coord in self.defined_map_elements_coords:
-                QMessageBox.warning(self, "경고", "미리 정의된 맵 요소(벽/문/도착지점)는 토글할 수 없습니다.")
+                print("[MapWidget 경고] 미리 정의된 맵 요소(벽/문/도착지점)는 토글할 수 없습니다.")
+                # QMessageBox.warning(self, "경고", "미리 정의된 맵 요소(벽/문/도착지점)는 토글할 수 없습니다.") # 디버그 콘솔 처리
             else:  # 사용자가 정의한 장애물 추가/제거
                 if self.grid[row][col] == 0:
                     self.grid[row][col] = 1
@@ -465,15 +479,12 @@ class MapWidget(QWidget):
                 self.update_obstacles_from_grid()  # 장애물 셋도 갱신
 
                 if self.doors[clicked_coord]:
-                    QMessageBox.information(self, "문 상태", f"문 ({col},{row})이 열렸습니다.")
+                    print(f"[MapWidget 정보] 문 ({col},{row})이 열렸습니다.")
+                    # QMessageBox.information(self, "문 상태", f"문 ({col},{row})이 열렸습니다.") # 디버그 콘솔 처리
                 else:
-                    QMessageBox.information(self, "문 상태", f"문 ({col},{row})이 닫혔습니다.")
+                    print(f"[MapWidget 정보] 문 ({col},{row})이 닫혔습니다.")
+                    # QMessageBox.information(self, "문 상태", f"문 ({col},{row})이 닫혔습니다.") # 디버그 콘솔 처리
             elif clicked_room_name:
-                # current_pos는 이미 설정되어 있으므로 이 경고는 필요 없음
-                # if self.current_pos is None:
-                #     QMessageBox.warning(self, "경고", "로봇의 현재 위치를 먼저 설정해주세요. (맵의 빈 공간 우클릭)")
-                #     return
-
                 # VoiceAssistant에서 넘어오는 room_number는 문자열이므로, 여기서도 문자열로 처리
                 destination_coord = self.destination_points_map.get(clicked_room_name)
                 if destination_coord:
@@ -481,34 +492,14 @@ class MapWidget(QWidget):
                     self.current_destination_room = clicked_room_name  # 목적지 방 번호 저장
                     self.start_pathfinding()
                 else:
-                    QMessageBox.warning(self, "오류", f"{clicked_room_name}에 대한 도착지점 정보를 찾을 수 없습니다.")
+                    print(f"[MapWidget 오류] {clicked_room_name}에 대한 도착지점 정보를 찾을 수 없습니다.")
+                    # QMessageBox.warning(self, "오류", f"{clicked_room_name}에 대한 도착지점 정보를 찾을 수 없습니다.") # 디버그 콘솔 처리
 
             else:  # 일반 그리드 셀 클릭 (출발지 또는 도착지)
                 if self.grid[row][col] == 1:
-                    QMessageBox.warning(self, "경고", "벽은 출발지/도착지로 선택할 수 없습니다.")
+                    print("[MapWidget 경고] 벽은 출발지/도착지로 선택할 수 없습니다.")
+                    # QMessageBox.warning(self, "경고", "벽은 출발지/도착지로 선택할 수 없습니다.") # 디버그 콘솔 처리
                     return
-
-                # 시작 위치가 이미 고정되었으므로, 이 클릭은 항상 도착지 설정으로 간주
-                # if not self.start_pos_set: # 시작 위치가 설정되지 않은 경우
-                #     if self.clicked_positions and len(self.clicked_positions) > 0 and self.current_pos is None:
-                #         # 후보 위치가 있는 경우, 그 중 하나를 클릭했는지 확인
-                #         if clicked_coord in self.clicked_positions:
-                #             self.current_pos = clicked_coord
-                #             self.start_pos_set = True
-                #             self.clicked_positions.clear()
-                #             # QMessageBox.information(self, "시작 위치 설정", f"로봇 시작 위치가 ({clicked_coord[0]}, {clicked_coord[1]})로 설정되었습니다.") # 메시지 제거
-                #         else:
-                #             QMessageBox.warning(self, "경고", "표시된 후보 위치 중 하나를 클릭하여 출발지를 설정해야 합니다.")
-                #             return
-                #     else: # 후보 위치 없이 직접 클릭하여 시작 위치 설정
-                #         self.current_pos = clicked_coord
-                #         self.start_pos_set = True
-                #         # QMessageBox.information(self, "시작 위치 설정", f"로봇 시작 위치가 ({clicked_coord[0]}, {clicked_coord[1]})로 설정되었습니다.") # 메시지 제거
-                # else: # 시작 위치가 설정된 후 도착지를 클릭
-                # current_pos는 이미 설정되어 있으므로 이 경고는 필요 없음
-                # if self.current_pos is None:
-                #     QMessageBox.warning(self, "경고", "로봇의 현재 위치를 먼저 설정해주세요. (맵의 빈 공간 우클릭)")
-                #     return
 
                 self.clicked_positions = [clicked_coord]
                 # 일반 클릭을 통한 도착지 설정 시에는 room_number가 없으므로 None으로 설정
@@ -524,83 +515,8 @@ class MapWidget(QWidget):
                 if self.grid[r][c] == 1:
                     self.obstacles.add((c, r))
 
-    def estimate_position_by_user_input(self):
-        # 시작 위치가 고정되었으므로 이 함수는 더 이상 필요 없음
-        QMessageBox.warning(self, "경고", "로봇의 시작 위치는 이미 고정되었습니다.")
-        return
-        # if self.start_pos_set and self.current_pos is not None:
-        #     QMessageBox.warning(self, "경고", "로봇의 시작 위치는 한 번 설정되면 다시 변경할 수 없습니다. 이미 위치가 설정되었습니다.")
-        #     return
-
-        # user_distances = {}
-        # directions_map = {
-        #     "상 (위)": (0, -1),
-        #     "하 (아래)": (0, 1),
-        #     "좌 (왼쪽)": (-1, 0),
-        #     "우 (오른쪽)": (1, 0)
-        # }
-
-        # for direction_name, _ in directions_map.items():
-        #     text, ok = QInputDialog.getText(self, "위치 추정 입력",
-        #                                     f"로봇으로부터 '{direction_name}' 방향으로 벽/문까지의 거리는 몇 칸입니까? (정수 입력):")
-        #     if ok:
-        #         try:
-        #             user_distances[direction_name] = int(text)
-        #         except ValueError:
-        #             QMessageBox.warning(self, "입력 오류", "유효한 정수를 입력해주세요.")
-        #             return
-        #     else: # 사용자가 취소를 눌렀을 경우
-        #         self.current_pos = None # 초기화
-        #         self.start_pos_set = False
-        #         self.clicked_positions.clear()
-        #         self.update()
-        #         return
-
-        # self.clicked_positions.clear()
-        # possible_positions = []
-
-        # for r in range(GRID_ROWS):
-        #     for c in range(GRID_COLS):
-        #         test_pos = (c, r)
-        #         if self.grid[r][c] == 1: # 장애물인 곳은 시작 위치가 될 수 없음
-        #             continue
-
-        #         simulated_distances = {}
-        #         match = True
-        #         for direction_name, direction_vec in directions_map.items():
-        #             simulated_dist = get_distance_to_obstacle(test_pos, direction_vec, self.grid, self.doors)
-        #             if simulated_dist != user_distances[direction_name]:
-        #                 match = False
-        #                 break
-        #             simulated_distances[direction_name] = simulated_dist
-
-        #         if match:
-        #             possible_positions.append(test_pos)
-
-        # if not possible_positions:
-        #     QMessageBox.warning(self, "위치 추정 실패", "입력된 센서 정보와 일치하는 위치를 찾을 수 없습니다.\n정확한 정보를 입력했는지 확인해주세요.")
-        #     self.current_pos = None
-        #     self.start_pos_set = False
-        # elif len(possible_positions) == 1:
-        #     self.current_pos = possible_positions[0]
-        #     self.start_pos_set = True
-        #     self.clicked_positions.clear() # 후보 표시 제거
-        #     # QMessageBox.information(self, "위치 추정 성공", f"로봇 시작 위치가 ({self.current_pos[0]}, {self.current_pos[1]})로 설정되었습니다.") # 메시지 제거
-        # else:
-        #     self.clicked_positions = possible_positions # 여러 후보를 표시
-        #     self.current_pos = None # 아직 확정되지 않음
-        #     self.start_pos_set = False # 아직 확정되지 않음
-        #     QMessageBox.information(self, "위치 추정 결과",
-        #                             f"입력된 정보와 일치하는 위치가 {len(possible_positions)}개 있습니다.\n맵에 표시된 파란색 테두리 중 정확한 출발지를 클릭해주세요.")
-        # self.update()
-
     def navigate_to_room_from_voice(self, room_number):
         print(f"[MapWidget] 음성 명령: {room_number}호로 이동 요청 받음 (VoiceAssistant로부터 직접 호출됨)")
-
-        # current_pos는 이미 설정되어 있으므로 이 경고는 필요 없음
-        # if self.current_pos is None:
-        #     QMessageBox.warning(self, "경고", "로봇의 현재 위치가 설정되지 않았습니다. 맵에서 우클릭하여 위치를 먼저 추정해주세요.")
-        #     return
 
         destination_coord = self.destination_points_map.get(room_number)
         if destination_coord:
@@ -609,16 +525,13 @@ class MapWidget(QWidget):
             self.start_pathfinding()  # 경로 탐색 및 이동 시작
             self.update()
         else:
-            QMessageBox.warning(self, "오류", f"{room_number}에 대한 도착지점 정보를 찾을 수 없습니다.")
+            print(f"[MapWidget 오류] {room_number}에 대한 도착지점 정보를 찾을 수 없습니다.")
+            # QMessageBox.warning(self, "오류", f"{room_number}에 대한 도착지점 정보를 찾을 수 없습니다.") # 디버그 콘솔 처리
 
     def start_pathfinding(self):
-        # current_pos는 이미 설정되어 있으므로 이 경고는 필요 없음
-        # if self.current_pos is None or not self.start_pos_set:
-        #     QMessageBox.warning(self, "오류", "로봇의 현재 위치(출발지)가 설정되지 않았습니다. 먼저 출발지를 지정해주세요.")
-        #     return
-
         if not self.clicked_positions or len(self.clicked_positions) != 1:
-            QMessageBox.warning(self, "오류", "도착지를 정확히 지정해야 합니다.")
+            print("[MapWidget 오류] 도착지를 정확히 지정해야 합니다.")
+            # QMessageBox.warning(self, "오류", "도착지를 정확히 지정해야 합니다.") # 디버그 콘솔 처리
             return
 
         start = self.current_pos
@@ -631,7 +544,8 @@ class MapWidget(QWidget):
             self.timer.start(100)  # 100ms마다 이동
             self.update()
         else:
-            QMessageBox.information(self, "안내", "경로를 찾을 수 없습니다. 벽을 피하거나 경로가 가능한 곳을 선택하세요.")
+            print("[MapWidget 정보] 경로를 찾을 수 없습니다. 벽을 피하거나 경로가 가능한 곳을 선택하세요.")
+            # QMessageBox.information(self, "안내", "경로를 찾을 수 없습니다. 벽을 피하거나 경로가 가능한 곳을 선택하세요.") # 디버그 콘솔 처리
 
     def update_position(self):
         self.path_index += 1
@@ -649,3 +563,17 @@ class MapWidget(QWidget):
             if self.current_destination_room:
                 self.robot_moved_to_destination.emit(self.current_destination_room)
                 self.current_destination_room = None  # 시그널 방출 후 초기화
+
+    def closeEvent(self, event):
+        # 애플리케이션 종료 시 pygame mixer 종료
+        if pygame and pygame.mixer.get_init():
+            pygame.mixer.quit()
+        super().closeEvent(event)
+
+'''
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    map_widget = MapWidget()
+    map_widget.show()
+    sys.exit(app.exec_())
+'''
