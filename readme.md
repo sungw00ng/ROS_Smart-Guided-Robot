@@ -2,6 +2,7 @@
 # ROS_Smart_Guided_Robot
 - 4학년 1학기 캡스톤 디자인<br>
 - [중간 평가 보고 PPT] (https://www.miricanvas.com/v/14m88l5) <br>
+- [최종 보고 PPT] (https://www.miricanvas.com/v/14r0ktg)  <br>
 - 사용 로봇 : 한백전자 SerBot AGV <br>
 <img width="300" alt="Image" src="https://github.com/user-attachments/assets/d1ea4d69-8b30-4a51-a445-b27ba9ade347" style="float: left;"/><br>
 
@@ -22,6 +23,9 @@
 <img src="https://github.com/user-attachments/assets/7f7c75e4-9918-41b5-b912-bad5558dd65a" width="600"/><br>
 <img src="https://github.com/user-attachments/assets/1b38b6ae-5c21-4c46-82c3-6aa7a9f16c93" width="600"/><br>
 - A*경로탐색(다익스트라)
+
+<img src="https://github.com/user-attachments/assets/8821ce18-af6c-4cfa-814d-ce773689614d" width="600"/><br>
+
 현재까지의 비용 g(n) + 목표까지의 추정 비용 h(n)= f(n)이 가장 낮은 노드를 우선 탐색 <br>
 ```txt
 heapq.heappush(heap, (f, node)): 우선순위 f를 기준으로 자동 정렬
