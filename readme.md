@@ -9,8 +9,6 @@
 ## 사용 환경 및 프로그램
 - Python 3.8.10
 - PyQt5
-- ROS2 Foxy
-- OpenCV
 
 ## Front(4배속 GIF, 사용자 음성 인식 가능)
 - Voice_Assistant_Sim_v3 단계 <br>
@@ -33,15 +31,5 @@ heapq.heappop(heap): 가장 f값이 작은 노드를 O(log N) 시간에 꺼낼 �
 ```
 - 장애물 우클릭 토글(다시 A* 탐색을 자동으로 실행해서 경로를 업데이트) <br>
 
-## Controller
-<img src="https://github.com/user-attachments/assets/b8f4b778-98e2-4fb8-a781-d41dfa0eab36" width="500" style="float: left;" /> <br>
-
-
-
-
 ## Lidar 센서 기반 장애물 회피 
 - 장애물 회피
-
-
-## 주요 개발 과정 (Phase별)<br>
-![프로젝트간트차트](https://github.com/user-attachments/assets/1f33c9f6-bfc3-4be0-b33e-17e6cdc0f097) <br>
